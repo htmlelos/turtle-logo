@@ -150,7 +150,7 @@ const commandFactory = (name: CommandName, value?: number | Degree) => {
 
 // Command Batch Processing
 const comandBatchProcessing = (commands: Command[]) => (turtle: Turtle) => {
-  const result = commands.reduce((turtle, command) => {
+  return commands.reduce((turtle, command) => {
     return executeCommand(command)(turtle);
   }, turtle);
 };
