@@ -1,4 +1,4 @@
-import { pipe } from "../utils/pipe";
+import { pipe } from '../utils/pipe';
 
 export type Point = { readonly x: number; readonly y: number };
 export const pointParser = (value: { x: number; y: number }) => {
@@ -7,17 +7,17 @@ export const pointParser = (value: { x: number; y: number }) => {
 
 export type Degree = number;
 export const degreeParser = (value: number): Degree => {
-  if (typeof value !== "number")
-    throw new Error("degree value must be a number");
+  if (typeof value !== 'number')
+    throw new Error('degree value must be a number');
   if (value < -360 || value > 360)
-    throw new Error("degree must be between -360 and 360 degree");
+    throw new Error('degree must be between -360 and 360 degree');
 
   return value;
 };
-export type State = "up" | "down";
+export type State = 'up' | 'down';
 export const stateParser = (value: string): State => {
-  if (typeof value !== "string") throw new Error("state must be a string");
-  if (!["up", "down"].includes(value))
+  if (typeof value !== 'string') throw new Error('state must be a string');
+  if (!['up', 'down'].includes(value))
     throw new Error('state must be "up" or "down" value only');
   return value as State;
 };
@@ -55,7 +55,7 @@ const calcNewPosition = (distance: number, angle: Degree, position: Point) => {
 export const moveAction = (distance: number) => (turtle: Turtle) => {
   const { angle, position, state, context } = turtle;
   const newPosition = calcNewPosition(distance, angle, position);
-  if (state === "down") {
+  if (state === 'down') {
     // context.beginPath();
     context.moveTo(position.x, position.y);
     context.lineTo(newPosition.x, newPosition.y);
@@ -63,7 +63,7 @@ export const moveAction = (distance: number) => (turtle: Turtle) => {
     // context.closePath();
   }
 
-  if (state === "up") {
+  if (state === 'up') {
     context.moveTo(newPosition.x, newPosition.y);
   }
 
@@ -71,7 +71,7 @@ export const moveAction = (distance: number) => (turtle: Turtle) => {
     return { ...turtle, position: pointParser(value) };
   };
 
-  return action(turtle, position);
+  return action(turtle, newPosition);
 };
 
 export const turnAction = (angle: Degree) => (turtle: Turtle) => {
@@ -84,7 +84,7 @@ export const turnAction = (angle: Degree) => (turtle: Turtle) => {
 
 export const penUpAction = () => (turtle: Turtle) => {
   const action = (turtle: Turtle) => {
-    return { ...turtle, state: stateParser("up") };
+    return { ...turtle, state: stateParser('up') };
   };
 
   return action(turtle);
@@ -92,7 +92,7 @@ export const penUpAction = () => (turtle: Turtle) => {
 
 export const penDownAction = () => (turtle: Turtle) => {
   const action = (turtle: Turtle) => {
-    return { ...turtle, state: stateParser("down") };
+    return { ...turtle, state: stateParser('down') };
   };
 
   return action(turtle);
@@ -116,7 +116,7 @@ const match = <T, R>(value: T, patterns: Pattern<T, R>[]): R => {
   throw new Error(`Command ${value} not found`);
 };
 
-type CommandName = "MOVE" | "TURN" | "PEN UP" | "PEN DOWN";
+type CommandName = 'MOVE' | 'TURN' | 'PEN UP' | 'PEN DOWN';
 
 type Command = { name: CommandName; value?: number | Degree };
 const executeCommand =
@@ -124,19 +124,19 @@ const executeCommand =
   (turtle: Turtle): Turtle => {
     return match<Command, Turtle>(action, [
       {
-        when: (action) => action.name === "MOVE",
+        when: (action) => action.name === 'MOVE',
         then: (action) => moveAction(action.value ?? 0)(turtle),
       },
       {
-        when: (action) => action.name === "TURN",
+        when: (action) => action.name === 'TURN',
         then: (action) => turnAction(action.value ?? 0)(turtle),
       },
       {
-        when: (action) => action.name === "PEN UP",
+        when: (action) => action.name === 'PEN UP',
         then: () => penUpAction()(turtle),
       },
       {
-        when: (action) => action.name === "PEN DOWN",
+        when: (action) => action.name === 'PEN DOWN',
         then: () => penDownAction()(turtle),
       },
       { when: () => true, then: () => getTurtleAction()(turtle) },
@@ -157,13 +157,13 @@ const comandBatchProcessing = (commands: Command[]) => (turtle: Turtle) => {
 
 const commandList: Command[] = [] as Command[];
 
-commandList.push(commandFactory("PEN UP"));
-commandList.push(commandFactory("MOVE", 50));
-commandList.push(commandFactory("TURN", 90));
-commandList.push(commandFactory("MOVE", 50));
-commandList.push(commandFactory("TURN", 90));
-commandList.push(commandFactory("MOVE", 50));
-commandList.push(commandFactory("TURN", 90));
-commandList.push(commandFactory("PEN DOWN"));
+commandList.push(commandFactory('PEN UP'));
+commandList.push(commandFactory('MOVE', 50));
+commandList.push(commandFactory('TURN', 90));
+commandList.push(commandFactory('MOVE', 50));
+commandList.push(commandFactory('TURN', 90));
+commandList.push(commandFactory('MOVE', 50));
+commandList.push(commandFactory('TURN', 90));
+commandList.push(commandFactory('PEN DOWN'));
 
 comandBatchProcessing(commandList);
